@@ -48,7 +48,7 @@ int main(){
 
     int opcion=0;
     do{
-        printf("\n¿Desea buscar una palabra?\n1.Si\n2.No");
+        printf("\n¿Desea buscar una palabra?\n1.Si\n2.No ");
         double segundos;
         clock_t inicio; clock_t final;
         scanf("%i",&opcion);
@@ -61,7 +61,9 @@ int main(){
                         final = clock();
                         printf("\nPalabra encontrada");
                         segundos = (double)(final-inicio)/CLOCKS_PER_SEC;
-                        printf("\nTiempo de busqueda: %f",segundos);
+                        printf("\nTiempo de busqueda: %f segundos",segundos);
+                        segundos = segundos*1000;
+                        printf("\nTiempo de busqueda: %f milisegundos",segundos);
                     }else{
                         printf("\nPalabra no encontrada");  
                     }
