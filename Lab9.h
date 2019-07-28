@@ -11,6 +11,19 @@ typedef struct Tnodo{
     struct Tnodo *sgte;
 }Nodo;
 
+unsigned int operacionHash(char *palabra,int tamTabla){
+    int largo;
+    largo = strlen(palabra);
+    unsigned int resultadoHash = 0; //unsigned nos permite que no se utilicen los valores negativos, por ende se puede usar valores más grandes
+    for(int cont=0; cont<largo; cont++){
+        resultadoHash = resultadoHash*131 + *(palabra + cont);
+    }
+    resultadoHash = resultadoHash%tamTabla; //metodo hash division
+
+    return resultadoHash;
+
+}
+
 Nodo *crearNodo(char *palabra){
     int largo = strlen(palabra); //Strlen permite obtener el largo de un string sin contar \0, ej: hola, su largo seria 4
     Nodo *nodoAux = malloc(sizeof(struct Tnodo));
@@ -30,7 +43,7 @@ void insertarPalabra(Nodo *TablaHash[],char *palabra,int tamTabla){
     nodoAux1 = TablaHash[resultadoHash]; //nodoAux1 guarda el puntero a la tabla
     nodoAux2 = crearNodo(palabra); //se crea el nodoAux2 con la nueva palabra
     TablaHash[resultadoHash] = nodoAux2; //la tabla apunta al nodo nuevo
-    TablaHash[resultadoHash]->sgte = nodoAux1; //
+    TablaHash[resultadoHash]->sgte = nodoAux1; //Tabla hash su sgte contiene el puntero de la tabla que la tenia nodoAux
 }
 
 
