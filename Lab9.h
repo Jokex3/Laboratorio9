@@ -1,15 +1,143 @@
+#ifndef stdio_h
 #include <stdio.h>
+#define stdio_h
+#endif
+
+#ifndef stdlib_h
 #include <stdlib.h>
-#include <ctype.h>
-#include <string.h>
-#include <math.h>
+#define stdlib_h
+#endif
+
+#ifndef time_h
 #include <time.h>
+#define time_h
+#endif
+
+#ifndef string_h
+#include "string.h"
+#define string_h
+#endif
 
 typedef struct Tnodo{
     char *palabra;
     int totalDePalabras;
     struct Tnodo *sgte;
-}Nodo;
+}Nodo,*ptrNodo;
+
+
+int maximo(Nodo* tablaHash[], int tamTabla);
+int minimo(Nodo *tablaHash[],int tamTabla);
+int promedio(Nodo *tablaHash[], int tamTabla);
+int busqueda(Nodo* tablaHash[],char *palabra,int tamTabla);
+void liberarMemoria(Nodo* tablaHash[], int tamTabla);
+void iniciarTabla(Nodo *tablaHash[],int tamTabla);
+unsigned int operacionHash(char *palabra,int tamTabla);
+Nodo *crearNodo(char *palabra);
+void creatablahash(Nodo* tablaHash[],char *palabra, int tamTabla);
+int leerArchivo(Nodo* tablaHash[],char *nombre, int tamTabla);
+void insertarPalabra(Nodo *tablaHash[],char *palabra,int tamTabla);
+
+void crearArchivoParaMostrar(Nodo *tablaHash[], int tamTabla){
+	FILE *archivo = fopen("NuevoArchivo.txt","w");
+	Nodo *nodoAux;
+	fprintf(archivo,"Tabla Hash\n-----------------\n");
+	for(int cont=0; cont<tamTabla; cont++){
+	    nodoAux = tablaHash[cont];
+		fprintf(archivo,"%i]: ",cont);
+		while(nodoAux){
+			fprintf(archivo,"[%s] -> ",nodoAux->palabra);
+			nodoAux = nodoAux->sgte;
+		}
+		fprintf(archivo,"\n\n");
+	}
+	fclose(archivo);
+}
+
+
+int busqueda(Nodo* tablaHash[],char *palabra,int tamTabla){
+    Nodo *nodoAux;
+    int resultado = 1;
+    for(int cont=0; cont< tamTabla; cont++){
+        nodoAux = tablaHash[cont];
+        while(nodoAux){
+            if(strcmp(palabra,nodoAux->palabra) != 0){
+                nodoAux = nodoAux->sgte;
+            }else{
+                resultado = 0;
+                return resultado;
+            }
+        }
+
+    }
+    free(nodoAux);
+    return resultado;
+}
+
+void liberarMemoria(Nodo* tablaHash[], int tamTabla){
+    for(int cont=0; cont<tamTabla; cont++){
+        Nodo *nodoAux;
+        while(tablaHash[cont]){ //Mientras la tabla no este nula
+            nodoAux = tablaHash[cont]; //nodoAus a punta al primer nodo de la posicion cont
+            tablaHash[cont] = nodoAux->sgte;//Entonces tablaHash apunta al sgte nodo de la posicion cont
+            free(nodoAux); //Se libera la memoria del primer nodo
+        }
+        tablaHash[cont] = NULL; //Al final como la listas se eliminaron, la posicion apunta a nulo
+    }
+
+}
+
+void iniciarTabla(Nodo *tablaHash[],int tamTabla){
+    for(int cont=0; cont<tamTabla; cont++){
+        tablaHash[cont] = NULL; //Iniciamos la tabla pero en nulo, tambien puede declarar 0 por si hay error
+    }
+}
+
+int maximo(Nodo *tablaHash[],int tamTabla){
+    int maximoDePalabras = 0; 
+    int cantidadDePalabras = 0; //Variables para el maximo y la cantidad total de palabras que hay en la posicion
+    Nodo *nodoAux;
+    for(int cont=0; cont<tamTabla;cont++){
+        nodoAux = tablaHash[cont]; //Un nodo apunta a la tabla, es decir al primero nodo de la posicion que dice cont
+        while(nodoAux){ //Mientras nodo no es nulo
+            cantidadDePalabras++; //Aumenta
+            nodoAux = nodoAux->sgte; //Se mueve de un nodo a otro en la lista
+        }
+        if(maximoDePalabras < cantidadDePalabras){ //Si maximo es menor que la cantidad de palabras
+            maximoDePalabras = cantidadDePalabras; //Maximo obtiene el valor de totalDePalabras
+        }
+        cantidadDePalabras = 0; //Vuelve a ser 0 para poder usarse nuevamente
+    }
+    free(nodoAux);
+
+    return maximoDePalabras;
+}
+
+int minimo(Nodo *tablaHash[],int tamTabla){
+    int minimo = 100000; //Le damos un valor grande para comparar despues
+    int cantidadDePalabras = 0;
+    Nodo *nodoAux;
+    for(int cont=0; cont<tamTabla; cont++){
+        nodoAux = tablaHash[cont]; /*La funcion es igual a maximo*/
+        while(nodoAux){
+            cantidadDePalabras++;
+            nodoAux = nodoAux->sgte;
+        }
+        if(minimo > cantidadDePalabras){ //Solo cambia esta condicion, para que minimo obtenga la menor cantidad
+            minimo = cantidadDePalabras;
+        }
+        cantidadDePalabras = 0;
+    }
+    free(nodoAux);
+    return minimo;
+}
+
+int promedio(Nodo *tablaHash[], int tamTabla){
+    float promedio; 
+    promedio = tablaHash[0]->totalDePalabras/tamTabla;
+    /*Como se guardo el total de palabras en la estructura, lo usamos para que el tamano de la tabla lo divida*/
+    /*Asi que se saca un promedio de palabras que hay por posicion de la tabla*/
+    return promedio;
+}
 
 unsigned int operacionHash(char *palabra,int tamTabla){
     int largo;
@@ -55,37 +183,18 @@ int leerArchivo(Nodo* tablaHash[],char *nombre, int tamTabla){
     FILE *archivo = fopen(nombre,"r");
     while(!feof(archivo)){ //Mientras no sea final de archivo
         palabraExtraida = (char *)malloc(sizeof(char)*30);
-        fscanf(archivo,"%s",palabraExtraida);
-        insertarPalabra(tablaHash,palabraExtraida,tamTabla);
+        fscanf(archivo,"%s",palabraExtraida);//Copia el string del archivo y la deja en el string palabraextraida
+        insertarPalabra(tablaHash,palabraExtraida,tamTabla);//Ingresa la palabra al nuevo nodo
         totalDePalabras++;
         free(palabraExtraida);
     }
     fclose(archivo);
-    tablaHash[0]->totalDePalabras = totalDePalabras;
-
+    tablaHash[0]->totalDePalabras = totalDePalabras; //Se guarda el total de palabras en la estructura, pero solo en la primera posicion
     return totalDePalabras;
+}
 
-    int maximo(Nodo* tablaHash[], int tamTabla){
-        int maximoDePalabras; 
-        int cantidadDePalabras; //Variables para el maximo y la cantidad total de palabras que hay en la posicion
-        Nodo *nodoAux;
-        for(int cont=0; cont<tamTabla;i++){
-            nodoAux = tablaHash[cont]; //Un nodo apunta a la tabla, es decir al primero nodo de la posicion que dice cont
-            while(nodoAux){ //Mientras nodo no es nulo
-                cantidadDePalabras++; //Aumenta
-                nodoAux = nodoAux->sgte; //Se mueve de un nodo a otro en la lista
-            }
-            if(maximoDePalabras < cantidadDePalabras){ //Si maximo es menor que la cantidad de palabras
-                maximoDePalabras = cantidadDePalabras; //Maximo obtiene el valor de totalDePalabras
-            }
-            cantidadDePalabras = 0; //Vuelve a ser 0 para poder usarse nuevamente
-        }
-
-        return maximoDePalabras;
-    }
-
-    int minimo(Nodo *tablaHash,int tamTabla){
-        int minimo
-
-
-    }
+void creatablahash(Nodo* tablaHash[], char *nombre, int tamTabla){
+    int cantidadPalabras;
+    iniciarTabla(tablaHash,tamTabla);
+    cantidadPalabras = leerArchivo(tablaHash,nombre,tamTabla);
+}
