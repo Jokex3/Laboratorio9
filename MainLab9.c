@@ -50,26 +50,26 @@ int main(){
     do{
         printf("\n¿Desea buscar una palabra?\n1.Si\n2.No ");
         double segundos;
-        clock_t inicio; clock_t final;
+        clock_t inicio; clock_t final; //variables que son como tipo long, para abarcar valores grandes
         scanf("%i",&opcion);
         switch(opcion){
             case 1: printf("\n\nIngrese la palabra que esta buscando: ");
-                    char palabra[30];
+                    char palabra[30]; //variable que posee la palabra que quiere buscar la persona
                     scanf("%s",palabra);
-                    inicio = clock();
+                    inicio = clock(); //inicio obtiene el tiempo a partir de ese momento dice el reloj del computador
                     if(busqueda(tablaHash,palabra,tamTabla)==0){
-                        final = clock();
+                        final = clock();//final obtiene otro tiempo 
                         printf("\nPalabra encontrada");
-                        segundos = (double)(final-inicio)/CLOCKS_PER_SEC;
+                        segundos = (double)(final-inicio)/CLOCKS_PER_SEC; //el tiempo final se resta por el inicial dividido por en teoria 1000
                         printf("\nTiempo de busqueda: %f segundos",segundos);
-                        segundos = segundos*1000;
+                        segundos = segundos*1000; //esto es tratar de sacar el tiempo pero en milisegundos
                         printf("\nTiempo de busqueda: %f milisegundos",segundos);
                     }else{
                         printf("\nPalabra no encontrada");  
                     }
                     break;
         }
-    }while(opcion !=2);
+    }while((opcion<2)&&(opcion>0)); //si opcion es igual a 1 se mantiene el ciclo
 
     liberarMemoria(tablaHash,tamTabla);
     free(nombreArchivo);

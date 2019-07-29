@@ -38,15 +38,15 @@ int leerArchivo(Nodo* tablaHash[],char *nombre, int tamTabla);
 void insertarPalabra(Nodo *tablaHash[],char *palabra,int tamTabla);
 
 void crearArchivoParaMostrar(Nodo *tablaHash[], int tamTabla){
-	FILE *archivo = fopen("NuevoArchivo.txt","w");
-	Nodo *nodoAux;
-	fprintf(archivo,"Tabla Hash\n-----------------\n");
+	FILE *archivo = fopen("NuevoArchivo.txt","w"); //creamos un nuevo archivo
+	Nodo *nodoAux; //un nodo auxiliar
+	fprintf(archivo,"Tabla Hash\n-----------------\n"); //se agrega esto en el archivo
 	for(int cont=0; cont<tamTabla; cont++){
-	    nodoAux = tablaHash[cont];
-		fprintf(archivo,"%i]: ",cont);
-		while(nodoAux){
-			fprintf(archivo,"[%s] -> ",nodoAux->palabra);
-			nodoAux = nodoAux->sgte;
+	    nodoAux = tablaHash[cont]; //nodo apunta al primer nodo de la posicion cont
+		fprintf(archivo,"(%i): ",cont); //coloca el numero del cont en el archivo, para indicar que posicion es
+		while(nodoAux){ //mientras nodo no sea nulo
+			fprintf(archivo,"[%s] -> ",nodoAux->palabra); //coloca en el archivo la palabra correspondiente del nodo
+			nodoAux = nodoAux->sgte; //avanza por los nodos de la lista
 		}
 		fprintf(archivo,"\n\n");
 	}
@@ -56,14 +56,14 @@ void crearArchivoParaMostrar(Nodo *tablaHash[], int tamTabla){
 
 int busqueda(Nodo* tablaHash[],char *palabra,int tamTabla){
     Nodo *nodoAux;
-    int resultado = 1;
+    int resultado = 1; //resultado es 1
     for(int cont=0; cont< tamTabla; cont++){
         nodoAux = tablaHash[cont];
         while(nodoAux){
-            if(strcmp(palabra,nodoAux->palabra) != 0){
-                nodoAux = nodoAux->sgte;
+            if(strcmp(palabra,nodoAux->palabra) != 0){ //si no son iguales
+                nodoAux = nodoAux->sgte; //avanza en los nodos
             }else{
-                resultado = 0;
+                resultado = 0; //cuando se encuentra la palabra, resultado es 0 para el if que esta en main
                 return resultado;
             }
         }
